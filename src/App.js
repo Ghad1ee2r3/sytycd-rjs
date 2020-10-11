@@ -14,24 +14,30 @@ const instance = axios.create({
 });
 
 const App = () => {
-  const [authors, setAuthors] = useState(null);
+  const [authors, setAuthors] = useState([]);// error null
   const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);//error false
 
   const fetchAllAuthors = async () => {
-    const res = await instance.put("/api/authors/");
-    return res.data;
+    const res = await instance.get("/api/authors/");//erorr
+    
+    setAuthors(res.data);
+    setLoading(false);
   };
 
   const fetchAllBooks = async () => {
     const res = await instance.get("/-api/books/");
-    return res.data;
+    setBooks( res.data);
+    setLoading(false);
   };
 
-  useEffect(async () => {
+  useEffect( () => {//error async
     try {
-      const authors = await fetchAllAuthors();
-      const books = await fetchAllBooks();
+      fetchAllAuthors();
+      fetchAllBooks();
+
+      //const authors = await fetchAllAuthors();
+      //const books = await fetchAllBooks();
 
       /**
        * Alternatives: this version would run in parallel!
@@ -40,13 +46,13 @@ const App = () => {
       // const booksReq = fetchAllBooks();
       // const authors = await authorsReq;
       // const books = await booksReq;
-      setBooks(books);
-      setAuthors(authors);
-      setLoading(false);
+     // setBooks(books);
+      //setAuthors(authors);
+      //setLoading(false);
     } catch (err) {
       console.error(err);
     }
-  });
+  },[]);//add []
 
   const getView = () => {
     if (loading) {
@@ -55,7 +61,7 @@ const App = () => {
       return (
         <Switch>
           <Redirect exact from="/" to="/authors" />
-          <Route path="/authors/:ID">
+          <Route path="/authors/:authorID">
             <AuthorDetail />
           </Route>
           <Route path="/authors/">

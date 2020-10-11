@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+//import { useParams } from "react-router";
 
 // Components
 import BookTable from "./BookTable";
@@ -12,16 +13,17 @@ const instance = axios.create({
   baseURL: "https://the-index-api.herokuapp.com"
 });
 
-const AuthorDetail = props => {
-  const [author, setAuthor] = useState(null);
+const AuthorDetail = () => {
+  const [author, setAuthor] = useState([]);//error null
   const [loading, setLoading] = useState(true);
+  const { authorID } = useParams();
+  const authorName = `${author.first_name} ${author.last_name}`;
 
-  useEffect(() => {
-    getAuthor();
-  }, [useParams().authorID]);
+
+  
 
   const getAuthor = async () => {
-    const authorID = useParams().authorID;
+   // const authorID = useParams().authorID;
     setLoading(true);
     try {
       const res = await instance.get(`/api/authors/${authorID}`);
@@ -33,11 +35,15 @@ const AuthorDetail = props => {
     }
   };
 
-  if (loading) {
+  useEffect(() => {
+    getAuthor();
+  }, [authorID]);//error
+
+  if (loading) 
     return <Loading />;
-  } else {
-    const author = author;
-    const authorName = `${author.first_name} ${author.last_name}`;
+  //} else {
+  //  const author = author;
+   // const authorName = `${author.first_name} ${author.last_name}`;
     return (
       <div className="author">
         <div>
@@ -51,7 +57,7 @@ const AuthorDetail = props => {
         <BookTable books={author.books} />
       </div>
     );
-  }
-};
+  };
+
 
 export default AuthorDetail;
